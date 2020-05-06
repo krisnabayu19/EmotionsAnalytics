@@ -2,11 +2,13 @@ import string
 from collections import Counter
 import pandas as pd
 import operator
+from textblob import TextBlob
 import matplotlib.pyplot as plt
 
 from collections import UserList
 import sumpy
 import numpy as np
+
 
 
 # reading text file
@@ -21,16 +23,20 @@ cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
 # splitting text into words
 tokenized_words = cleaned_text.split()
 
-stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
-              "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
-              "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these",
-              "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do",
-              "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while",
-              "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before",
-              "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again",
-              "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
-              "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
-              "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
+stop_words = ["saya", "kamu", "dia", "kita", "mereka", "kami", "dan", "atau", "sebaliknya", "pada", "dalam", "untuk", "dari", "kepada", "terhadap", "oleh", "tetapi", "juga", "karena","seperti"]
+
+
+
+# stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
+#               "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
+#               "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these",
+#               "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do",
+#               "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while",
+#               "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before",
+#               "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again",
+#               "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
+#               "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
+#               "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
 
 # Removing stop words from the tokenized words list
 final_words = []
@@ -56,34 +62,83 @@ with open('indoemotions.txt', 'r') as file:
         if word in final_words:
             emotion_list.append(emotion)
 
-print("Clean Text :", text)
-print("Lower Case Text :", lower_case)
-print("Tokenized Text : ", final_words)
-print("Emotions List :", emotion_list)
-# print(word)
-
-# Count Emotions
-emotion_word = Counter(emotion_list)
-count_emotion = pd.Series(emotion_word)
+    # Cleancing
+    print("Clean Text :", text)
+    print("Lower Case Text :", lower_case)
+    print("Tokenized Text : ", final_words)
+    print("Emotions List :", emotion_list)
 
 
-# Sum from Count Emotions
-sum_emotion = sum(count_emotion)
-# print(sum_emotion)
 
-# Create Calculation Emotions
-percent_emotion = (count_emotion / sum_emotion)
-print("Klasifikasi Tingkat Emosi :")
-print(percent_emotion)
-print("=========================================")
+    # Cek Value in Array emotion_list
+    if ' senang' in emotion_list:
+        print("Emosi Senang Terdeteksi")
 
-# Compare Emotions
-compare_emotion = max(percent_emotion.iteritems(), key=operator.itemgetter(1))[0]
-print("Emosi Terdeteksi :",compare_emotion)
+        # Count Emotion
+        emotion_word = Counter(emotion_list)
+        count_emotion = pd.Series(emotion_word)
 
-# Visualization Grafik Emotions
-fig, ax1 = plt.subplots()
-ax1.bar(emotion_word.keys(), percent_emotion)
-fig.autofmt_xdate()
-plt.savefig('graph.png')
-plt.show()
+        # Sum from Count Emotions
+        sum_emotion = sum(count_emotion)
+
+        # Create Calculation Emotions
+        percent_emotion = (count_emotion / sum_emotion)
+        print("Klasifikasi Tingkat Emosi :")
+        print(percent_emotion)
+        print("=========================================")
+
+        # Selecting Label Senang from Array
+        compare_emotion = percent_emotion.loc[' senang']
+        print("Kadar Emosi Senang :",compare_emotion)
+        print("=========================================")
+
+        # Visualization Grafik Emotions
+        fig, ax1 = plt.subplots()
+        ax1.bar(emotion_word.keys(), percent_emotion)
+        fig.autofmt_xdate()
+        plt.savefig('graph.png')
+        plt.show()
+
+
+    else:
+        print("Emosi Senang Tidak Terdeteksi")
+        compare_emotion = str('0')
+        print("=========================================")
+        print("Kadar Emosi Senang :",compare_emotion)
+        print("=========================================")
+
+
+
+
+
+
+        # Cek Value in Array emotion_list
+        # if not emotion_list == ['senang']:
+        #     compare_emotion = str("0")
+        #     print("Emosi Senang Terdeteksi :", compare_emotion)
+
+
+        # Count Emotiom
+        # emotion_word = Counter(emotion_list)
+        # count_emotion = pd.Series(emotion_word)
+
+        # Sum from Count Emotions
+        # sum_emotion = sum(count_emotion)
+
+        # Create Calculation Emotions
+        # percent_emotion = (count_emotion / sum_emotion)
+        # print("Klasifikasi Tingkat Emosi :")
+        # print(percent_emotion)
+        # print("=========================================")
+
+
+        # compare_emotion = max(percent_emotion.iteritems(), key=operator.itemgetter(1))
+        # print("Emosi Terdeteksi :", compare_emotion)
+        # print(percent_emotion == senang)
+
+        # Visualization Grafik Emotions
+        # fig, ax1 = plt.subplots()
+        # ax1.bar(emotion_word.keys(), percent_emotion)
+        # fig.autofmt_xdate()
+        # plt.savefig('graph.png')
+        # plt.show()
